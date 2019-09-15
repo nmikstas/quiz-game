@@ -1,0 +1,115 @@
+body, html
+{
+    height: 100%;
+}
+
+h6
+{
+    font-weight: bold;
+    border-bottom: 2px solid #666666;
+}
+
+h5
+{
+    font-weight: bold;
+    color: #777777;
+}
+
+h4
+{
+    overflow: hidden;
+    font-size: 22px;
+    font-weight: bold;
+    margin: auto;
+    height: 30px;
+    color: #000000;
+}
+
+h2
+{
+    font-size: 50px;
+    font-family: cursive;
+    color: #4aaaa5;
+    text-align: center;
+    border-bottom: 3px solid #666666;
+}
+
+h1
+{
+    font-size: 80px;
+    font-family: cursive;
+    color: #000000;
+    text-align: center;
+    border-bottom: 3px solid #666666;
+}
+
+p
+{
+    line-height: 1.5;
+    font-size: 18px;
+    font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+    color: #777777;
+}
+
+.header-class
+{
+    font-family: Georgia, Times, serif;
+    text-align: center;
+    background-color: #4aaaa5;
+    color: #ffffff;
+    font-size: 30px;
+    border-bottom: 3px solid #666666;
+    padding: 20px 0px;
+}
+
+.choice-button
+{
+    background-color: transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+    display: block;
+    margin: 0 auto;
+    font-size: 50px;
+    font-family: cursive;
+    color: #666666;  
+}
+
+.choice-button:hover
+{
+    box-shadow: 0 0 0 .2rem #4aaaa5;
+}
+
+.question-timer
+{
+    opacity: .5;
+}
+
+#main-container
+{
+    min-height: 75vh;
+    background-color: #ebfcfb;
+    text-align: center;
+}
+
+#page-body
+{
+    background-image: url("../images/mosaic.png");
+    flex: 1 0 auto;
+}
+
+#sticky-footer
+{
+    background-color: #666666;
+    border-top: 8px solid #4aaaa5;
+}
+
+#start
+{
+    margin-top: 25px;
+    font-size: 50px;
+}
+
+
