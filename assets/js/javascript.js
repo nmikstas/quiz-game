@@ -245,7 +245,7 @@ class QuizGame
             {
                 question: "What character did Arnold Schwarzenegger play in \"The Running Man\"?",
                 answer:   "Ben Richards",
-                ansInfo:  "Arnold Schwarzenegger played Ben Richards \"The Running Man\"",
+                ansInfo:  "Arnold Schwarzenegger played Ben Richards in \"The Running Man\"",
                 wrong:    ["John Matrix", "Harry Tasker", "Alan \"Dutch\" Schaefer"],
                 image:    "assets/images/richards.gif"
             },
@@ -333,8 +333,9 @@ class QuizGame
         this.questionCan1;
         this.thisQuestion;
 
-        //Question and answer timer.
+        //Question and answer timers.
         this.qTimer;
+        this.aTimer;
 
     } //End constructor.
     
@@ -476,10 +477,10 @@ class QuizGame
                 //Callback for expired question timer.
                 var timeUp1 = function()
                 {
-                   self.questionResult = self.questionResults.TIME_UP;
-                   if(self.debug)console.log("Player choice: " + self.questionResult);
-                   self.state = self.gameStates.FADE_OUT_QUESTION;
-                   self.updateState(playArea);
+                    self.questionResult = self.questionResults.TIME_UP;
+                    if(self.debug)console.log("Player choice: " + self.questionResult);
+                    self.state = self.gameStates.FADE_OUT_QUESTION;
+                    self.updateState(playArea);
                 }
 
                 //Instantiate the timer object and start it.
@@ -493,8 +494,7 @@ class QuizGame
                 if(this.debug)console.log("state: " + this.state);
 
                 this.thisQuestion.empty();
-                this.questionCol2.empty();
-                this.questionCol3.empty();
+                this.questionRow2.empty();
 
                 //Choose next state based on player result and update the stats.
                 if(this.questionResult === this.questionResults.CORRECT)
@@ -513,6 +513,7 @@ class QuizGame
                     this.timeOut++;
                 }
 
+                if(this.debug)console.log("Correct: " + this.correct + ", Incorrect: " + this.incorrect + ", Time-outs: " + this.timeOut);
                 this.updateState(playArea);
                 break;
 
@@ -528,31 +529,128 @@ class QuizGame
                 //Show the question info where the question used to be.
                 this.thisQuestion.text(this.questionResult + "! " + this.quizQuestions[questionIndex].ansInfo);
 
-                //Create image opject for the gif.
-                
+                //Add a wide column to the row below the answer.
+                this.questionCol2 = $("<div>");
+                this.questionCol2.addClass("col-md-12");
+                this.questionRow2.append(this.questionCol2);
 
+                //Create image object for the gif.
+                var image = $("<img src=" + this.quizQuestions[questionIndex].image + ">");
+                image.addClass("gif-image");
+                this.questionCol2.append(image);
 
+                //Add a canvas for the timer. Cannot be created with JQuery.
+                this.questionCan1 = document.createElement("canvas");
+                this.questionCan1.classList.add("answer-timer");
+                this.questionCol2.append(this.questionCan1);
 
+                this.state = this.gameStates.SHOW_ANSWER;
+                this.updateState(playArea);
                 break;
 
+            //Start the answer timer.
             case this.gameStates.SHOW_ANSWER:
                 if(this.debug)console.log("state: " + this.state);
+
+                var self = this;
+
+                //Callback for expired answer timer.
+                var timeUp2 = function()
+                {
+                   if(self.debug)console.log("Answer timer callback called");
+                   self.state = self.gameStates.FADE_OUT_ANSWER;
+                   self.updateState(playArea);
+                }
+
+                //Instantiate the timer object and start it.
+                this.aTimer = new GameTimer(this.questionCan1, 50, 5, CLOCK_STYLE_0, "transparent", timeUp2);
+                this.aTimer.startTimer();
                 break;
 
+            //Remove the answer from the display.  Can do fancy fade out stuff here.
             case this.gameStates.FADE_OUT_ANSWER:
                 if(this.debug)console.log("state: " + this.state);
+
+                this.questionNumber++; //Move to the next question.
+                playArea.empty();      //Prepare to redraw play area.
+
+                if(this.questionNumber <= this.numQuestions)
+                {
+                    //Move to next state to show the next question.
+                    this.state = this.gameStates.FADE_IN_QUESTION;
+                    this.updateState(playArea);
+                }
+                else
+                {
+                    //Move to next state to end the quiz.
+                    this.state = this.gameStates.FADE_IN_PLAY_AGAIN;
+                    this.updateState(playArea);
+                }
                 break;
 
+            //Show the play again display.
             case this.gameStates.FADE_IN_PLAY_AGAIN:
                 if(this.debug)console.log("state: " + this.state);
+
+                //Display Movie Mania Quiz Game.
+                this.questionRow1 = $("<h1>");
+                this.questionRow1.addClass("pb-4 mb-3");
+                this.questionRow1.text("Movie Mania Quiz Game");
+                $("#main-container").append(this.questionRow1);
+
+                //Display the player's results.
+                this.questionRow2 = $("<h2>");
+                this.questionRow2.addClass("pb-4 mb-3");
+                this.questionRow2.html("You have comleted the movie quiz! Here are your results:" +
+                                       "<br>Correct: "   + this.correct   +
+                                       "<br>Incorrect: " + this.incorrect +
+                                       "<br>Timed out: " + this.timeOut);
+                $("#main-container").append(this.questionRow2);
+
+                this.state = this.gameStates.PLAY_AGAIN;
+                this.updateState(playArea);
                 break;
 
+            //Reset the variables.
             case this.gameStates.PLAY_AGAIN:
                 if(this.debug)console.log("state: " + this.state);
+
+                var self = this;
+ 
+                //Event listener for play again button.
+                var playAgain = function()
+                {
+                    self.state = self.gameStates.FADE_OUT_PLAY_AGAIN;
+                    self.updateState(playArea);
+                }
+
+                //Add play again button to the display. Reuse an existing variable.
+                this.questionCol1 = $("<input>");
+                this.questionCol1.addClass("btn btn-info");
+                this.questionCol1.attr("id", "play-again");
+                this.questionCol1.attr("type", "button");
+                this.questionCol1.attr("value", "Play Again");
+                $("#main-container").append(this.questionCol1);
+                
+                //Add event listener to button.
+                this.questionCol1.on("click", playAgain);
                 break;
 
             case this.gameStates.FADE_OUT_PLAY_AGAIN:
                 if(this.debug)console.log("state: " + this.state);
+
+                //Reset the score and question variables.
+                this.correct = 0;
+                this.incorrect = 0;
+                this.timeOut = 0;
+                this.questionNumber = 1;
+
+                //Clear the game area.
+                $("#main-container").empty();
+
+                //Start again!
+                this.state = this.gameStates.FADE_IN_QUESTION;
+                this.updateState(playArea);
                 break;
 
             //Should never get here.
@@ -587,7 +685,7 @@ class QuizGame
     }
 } //End QuizGame class.
 
-quizGame = new QuizGame(5); //Create a QuizGame object with 5 questions.
+quizGame = new QuizGame(2); //Create a QuizGame object with 12 questions.
 
 $(document).ready(function()
 { 
@@ -600,6 +698,3 @@ function startGame()
 {
     quizGame.updateState($('#main-container'));
 }
-
-
-
