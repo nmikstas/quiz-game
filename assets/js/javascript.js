@@ -337,6 +337,13 @@ class QuizGame
         this.qTimer;
         this.aTimer;
 
+        //Audio elements for the game.
+        this.audEndQuiz   = new Audio("assets/sounds/End_Quiz.mp3");
+        this.audCorrect   = new Audio("assets/sounds/Right_Answer.mp3");
+        this.audIncorrect = new Audio("assets/sounds/Wrong_Answer.mp3");
+        this.audTimeUp    = new Audio("assets/sounds/Time_Up.mp3");
+        this.audClock     = new Audio("assets/sounds/Tick_Tock.mp3");
+
     } //End constructor.
     
     /********************************* QuizGame Class Functions **********************************/
@@ -349,6 +356,10 @@ class QuizGame
             case this.gameStates.IDLE:
                 if(this.debug)console.log("state: " + this.state);
                 playArea.empty(); //Prepare to redraw play area.
+
+                //Clear and end game audio that may be playing.
+                this.audEndQuiz.pause();
+                this.audEndQuiz.currentTime = 0;
 
                 //Make sure the number of questions does not exceed the quizQuesions array size.
                 if(this.numQuestions > this.quizQuestions.length)
@@ -477,6 +488,9 @@ class QuizGame
                 //Callback for expired question timer.
                 var timeUp1 = function()
                 {
+                    //Play the time up sound.
+                    self.audTimeUp.play();
+
                     self.questionResult = self.questionResults.TIME_UP;
                     if(self.debug)console.log("Player choice: " + self.questionResult);
                     self.state = self.gameStates.FADE_OUT_QUESTION;
@@ -487,11 +501,18 @@ class QuizGame
                 this.qTimer = new GameTimer(this.questionCan1, 300, 20, CLOCK_STYLE_1, "#4aaaa5", timeUp1);
                 this.qTimer.startTimer();
 
+                //Play the clock ticking sound effect.
+                this.audClock.loop = true;
+                this.audClock.play()
                 break;
 
             //Use this state to remove the quesion and show the answer. Fancy fade out stuff can be put here.
             case this.gameStates.FADE_OUT_QUESTION:
                 if(this.debug)console.log("state: " + this.state);
+
+                //Stop the clock sound.
+                this.audClock.pause();
+                this.audClock.currentTime = 0;
 
                 this.thisQuestion.empty();
                 this.questionRow2.empty();
@@ -499,11 +520,13 @@ class QuizGame
                 //Choose next state based on player result and update the stats.
                 if(this.questionResult === this.questionResults.CORRECT)
                 {
+                    this.audCorrect.play();
                     this.state = this.gameStates.FADE_IN_CORRECT;
                     this.correct++;
                 }
                 else if(this.questionResult === this.questionResults.INCORRECT)
                 {
+                    this.audIncorrect.play();
                     this.state = this.gameStates.FADE_IN_INCORRECT;
                     this.incorrect++;
                 }
@@ -592,6 +615,9 @@ class QuizGame
             case this.gameStates.FADE_IN_PLAY_AGAIN:
                 if(this.debug)console.log("state: " + this.state);
 
+                //Play end game sound.
+                this.audEndQuiz.play();
+
                 //Display Movie Mania Quiz Game.
                 this.questionRow1 = $("<h1>");
                 this.questionRow1.addClass("pb-4 mb-3");
@@ -601,7 +627,7 @@ class QuizGame
                 //Display the player's results.
                 this.questionRow2 = $("<h2>");
                 this.questionRow2.addClass("pb-4 mb-3");
-                this.questionRow2.html("You have comleted the movie quiz! Here are your results:" +
+                this.questionRow2.html("You have completed the movie quiz! Here are your results:" +
                                        "<br>Correct: "   + this.correct   +
                                        "<br>Incorrect: " + this.incorrect +
                                        "<br>Timed out: " + this.timeOut);
@@ -649,7 +675,7 @@ class QuizGame
                 $("#main-container").empty();
 
                 //Start again!
-                this.state = this.gameStates.FADE_IN_QUESTION;
+                this.state = this.gameStates.IDLE;
                 this.updateState(playArea);
                 break;
 
@@ -685,7 +711,8 @@ class QuizGame
     }
 } //End QuizGame class.
 
-quizGame = new QuizGame(2); //Create a QuizGame object with 12 questions.
+/******************************************* Top Level *******************************************/
+quizGame = new QuizGame(12); //Create a QuizGame object with 12 questions.
 
 $(document).ready(function()
 { 
