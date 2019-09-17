@@ -12,7 +12,8 @@ class GameTimer
         this.timerType = timerType;
         this.textColor = textColor;
         this.timeUpCallBack = timeUpCallBack;
-
+        this.canvasMiddle = this.cnvsHeightWidth / 2;
+        this.radius = this.canvasMiddle - 5;
         this.canvas.height = cnvsHeightWidth;
         this.canvas.width = cnvsHeightWidth;
         this.ctx = canvas.getContext("2d");
@@ -23,13 +24,15 @@ class GameTimer
         this.timeRemaining = timerSeconds;
         this.timeString;
 
-        this.ANIM_TIME = 50; //50 milliseconds between animations.
+        //50 milliseconds between animations(20 frames per second).
+        this.ANIM_TIME = 50; 
+
+        //dTheta is the amount to update the angle every animation frame.
         this.dTheta = 2*Math.PI / (1000 / this.ANIM_TIME * this.timerSeconds);
-        this.canvasMiddle = this.cnvsHeightWidth / 2;
-        this.radius = this.canvasMiddle - 5;
     }
 
     /******************************** GameTimer Class Functions **********************************/
+    //This function draws a line in polar coordinates.
     drawLineAngle(angle, color, width)
     {
         this.ctx.beginPath();
@@ -40,6 +43,7 @@ class GameTimer
         this.ctx.stroke();
     }
 
+    //Draw an arc. Draws border around outside of circle.
     drawArc(startAngle, endAngle, color, width)
     {
         this.ctx.beginPath();
@@ -49,6 +53,7 @@ class GameTimer
         this.ctx.stroke();
     }
 
+    //Draw a filled in partial circle.
     drawPieSlice(startAngle, endAngle, color)
     {
         this.ctx.fillStyle = color;
@@ -59,6 +64,7 @@ class GameTimer
         this.ctx.fill();
     }
 
+    //Sets the timer time and recalculated dTheta.
     setTime(seconds)
     {
         this.timerSeconds = seconds;
@@ -68,6 +74,7 @@ class GameTimer
         this.dTheta = 2*Math.PI / (1000 / this.ANIM_TIME * this.timerSeconds);
     }
 
+    //Convert seconds into minutes, seconds and thenths of a second.
     timeConverter()
     {
         var tenthsString = this.timeRemaining.toFixed(1).toString();
@@ -77,22 +84,23 @@ class GameTimer
       
         if (seconds < 10)
         {
-          seconds = "0" + seconds;
+            seconds = "0" + seconds;
         }
       
         if (minutes === 0)
         {
-          minutes = "00";
+            minutes = "00";
         }
       
         else if (minutes < 10)
         {
-          minutes = "0" + minutes;
+            minutes = "0" + minutes;
         }
 
         return minutes + ":" + seconds + "." + tenths;
     }
 
+    //Prints the time string over the face of the timer.
     printTime()
     {
         var textSize = this.cnvsHeightWidth * .2;
@@ -112,6 +120,7 @@ class GameTimer
         }
     }
 
+    //Reset the timer and recalculate dTheta.
     resetTimer()
     {
         this.timeRemaining = this.timerSeconds;
@@ -120,6 +129,7 @@ class GameTimer
         this.dTheta = 2*Math.PI / (1000 / this.ANIM_TIME * this.timerSeconds);
     }
 
+    //Start the timer.
     startTimer()
     {
         this.isRunning = true;
@@ -130,12 +140,14 @@ class GameTimer
         this.intervalId = setInterval(function() { self.animateTime() }, this.ANIM_TIME);
     }
 
+    //Stop the timer.
     stopTimer()
     {
         this.isRunning = false;
         clearInterval(this.intervalId);
     }
 
+    //Animates the timer.  This function is called every 50 milliseconds.
     animateTime()
     {
         var circleColorGreen;
@@ -157,10 +169,13 @@ class GameTimer
             circleColorRed = 0xff;
         }
 
+        //Set the color of the face of the timer.
         var circleColor = "rgb(" + circleColorRed + ", " + circleColorGreen + ", 0)";
 
+        //Update the time remaining.
         this.timeRemaining -= this.ANIM_TIME / 1000;
 
+        //Draw the timer graphics.
         if(this.timerType === 0) //Circular with a Grey background.
         {
             this.ctx.clearRect(0, 0, this.cnvsHeightWidth, this.cnvsHeightWidth);
@@ -181,6 +196,7 @@ class GameTimer
             this.printTime();
         }
     
+        //Check if timer has expired. If so, do some housekeeping and call the time out callback function.
         if(this.endAng >= 2*Math.PI - this.dTheta)
         {
             this.isRunning = false;
@@ -400,7 +416,8 @@ class QuizGame
                 this.questionCol1 = $("<div>");
                 this.questionCol1.addClass("col-md-12");
                 this.questionRow1.append(this.questionCol1);
-                this.questionCol1.html("<h1 class=\"pb-4 mb-3\">Question #" + this.questionNumber + "</h1>");
+                this.questionCol1.html("<h1 class=\"pb-4 mb-3\">Question #" + this.questionNumber + 
+                                       " of " + this.numQuestions + "</h1>");
                 $("#main-container").append(this.questionRow1);
 
                 //Display the question.
@@ -580,9 +597,9 @@ class QuizGame
                 //Callback for expired answer timer.
                 var timeUp2 = function()
                 {
-                   if(self.debug)console.log("Answer timer callback called");
-                   self.state = self.gameStates.FADE_OUT_ANSWER;
-                   self.updateState(playArea);
+                    if(self.debug)console.log("Answer timer callback called");
+                    self.state = self.gameStates.FADE_OUT_ANSWER;
+                    self.updateState(playArea);
                 }
 
                 //Instantiate the timer object and start it.
@@ -662,6 +679,7 @@ class QuizGame
                 this.questionCol1.on("click", playAgain);
                 break;
 
+            //Reset the game stats.
             case this.gameStates.FADE_OUT_PLAY_AGAIN:
                 if(this.debug)console.log("state: " + this.state);
 
