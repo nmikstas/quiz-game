@@ -14,19 +14,56 @@
 
 <body class="d-flex flex-column">
 
-    <header class="header-class">Quiz Game</header> 
+    <!--Header-->
+    <header class="header-class">
+        <nav class="navbar navbar-dark navbar-expand-lg">
+            <a class="navbar-brand nav-title px-2" href="https://nmikstas.github.io/portfolio/">Nick Mikstas Portfolio</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="container">
+                <h1>Quiz Game</h1>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://nmikstas.github.io/portfolio/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://nmikstas.github.io/portfolio/resume.html">Resume</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://nmikstas.github.io/portfolio/web.html">Web</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://nmikstas.github.io/portfolio/embedded.html">Embedded</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://nmikstas.github.io/portfolio/fpga.html">FPGA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://nmikstas.github.io/portfolio/dsp.html">DSP</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://nmikstas.github.io/portfolio/games.html">Games</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header> 
 
     <div id="page-body">
 
         <div class="container px-4 py-4 my-4" id="main-container">
-            <h1 class="pb-4 mb-3">Movie Mania Quiz Game</h1>
+            <h3 class="pb-4 mb-3">Movie Mania Quiz Game</h3>
             <h2 class="pb-4 mb-3">
                 You will be given a set of random questions and a fixed time to answer each one.
                 At the end of the questions, your correct and incorrect totals will be given.
                 You will then have the option of starting again. Think fast!
             </h2>
 
-            <input class="btn btn-info" id="start" type="button" value="Start Game">
+            <input class="btn btn-primary" id="start" type="button" value="Start Game">
         </div>
 
     </div>
@@ -37,6 +74,7 @@
         </div>
     </footer>
 
+    <script src="assets/js/atimer.js"></script>
     <script src="assets/js/javascript.js"></script>
         
 </body>
