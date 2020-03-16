@@ -72,7 +72,7 @@ class ATimer
         this.dTheta = 2*Math.PI / (1000 / ATimer.ANIM_TIME * this.timerSeconds);
     }
 
-    //Convert seconds into minutes, seconds and thenths of a second.
+    //Convert seconds into minutes, seconds and tenths of a second.
     timeConverter()
     {
         var tenthsString = this.timeRemaining.toFixed(1).toString();
